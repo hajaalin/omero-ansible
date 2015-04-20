@@ -1,0 +1,43 @@
+---
+# Download and install OMERO.
+
+
+###################################################################
+# Install OMERO server dependencies.
+###################################################################
+  
+- name: add the zeroc repo
+  copy: src=zeroc-ice-el7.repo
+        dest=/etc/yum.repos.d/
+
+- name: install packages
+  yum: name={{ item }}
+       state=present
+  with_items:
+    - ice
+    - ice-servers  # Required for icegridnode.
+    - ice-python
+    - java-1.7.0-openjdk
+
+
+###################################################################
+# Create and configure the omero user.
+###################################################################
+
+- name: create the omero user
+  user: name={{ omero_user_name }}
+        uid={{ omero_uid }}
+        password={{ omero_user_password }}
+
+- name: set permissions of the omero users home directory
+  file: path="{{ omero_home }}"
+        mode=755
+        state=directory
+
+- name: add omero bashrc file
+  template: src=bashrc
+            dest="{{ omero_home }}/.bashrc"
+            owner={{ omero_user_name }}
+
+
+
