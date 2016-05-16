@@ -1,0 +1,11 @@
+---
+# Configure OMERO trust store.
+
+- name: configure trust store
+  hosts: all
+  sudo: true
+  vars_files:
+    - vars.yml
+
+  roles:
+    - trust_store_config

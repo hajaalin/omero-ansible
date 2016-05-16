@@ -39,3 +39,12 @@ ldap_group_filter: (objectClass=groupOfNames)
 ldap_group_mapping: name=cn
 ldap_new_user_group: default
 #ldap_new_user_group: ":filtered_dn_attribute:memberOf"
+
+# Trust store certificates
+omero_trust_store_certificates:
+  - { url: 'http://www.terena.org/activities/tcs/repository/AddTrust_External_CA_Root.pem', name: 'AddTrust_External_CA_Root.pem' }
+  - { url: 'http://www.terena.org/activities/tcs/repository/UTN-USERFirst-Hardware.pem', name: 'UTN-USERFirst-Hardware.pem' }
+  - { url: 'http://www.terena.org/activities/tcs/repository/TERENA_SSL_CA.pem', name: 'TERENA_SSL_CA.pem' }
+  - { url: 'http://www.terena.org/activities/tcs/repository/TERENA_eScience_SSL_CA.pem', name: 'TERENA_eScience_SSL_CA.pem' }
+omero_trust_store: "{{ omero_home }}/trust_store.jks"
+omero_trust_store_passwd: "omero_trust_store_passwd"

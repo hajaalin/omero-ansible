@@ -1,0 +1,29 @@
+---
+# Configure trust store for OMERO. This might be needed for LDAPS connection.
+
+- name: create directory for certificates
+  file: path={{ omero_home }}/certs state=directory owner={{ omero_user_name }}
+
+- name: download certificates
+  sudo_user: "{{ omero_user_name }}"
+  get_url: url={{ item.url }} dest={{ omero_home }}/certs/{{ item.name }}
+  with_items:
+    - "{{ omero_trust_store_certificates }}"
+
+- name: remove existing trust store
+  file: path={{ omero_trust_store }} state=absent
+
+- name: import certificates in a trust store file
+  sudo_user: "{{ omero_user_name }}"
+  command: keytool -importcert -noprompt -keystore {{ omero_trust_store }} -storepass {{ omero_trust_store_passwd }} -storetype JKS -providername SUN -file {{ item.name }} -alias {{ item.name }}
+  args:
+    chdir: "{{ omero_home }}/certs"
+  with_items:
+    - "{{ omero_trust_store_certificates }}"
+
+- name: configure OMERO to use trust store
+  sudo_user: "{{ omero_user_name }}"
+  command: "{{ omero_cmd }} config set {{ item.key }} {{ item.value }}"
+  with_items:
+    - { key: 'omero.security.trustStore', value: '{{ omero_trust_store }}' }
+    - { key: 'omero.security.trustStorePassword', value: '{{ omero_trust_store_passwd }}' }
